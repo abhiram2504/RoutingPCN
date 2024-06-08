@@ -1,8 +1,13 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 
-# Create a directed graph
-G = nx.DiGraph()
+G = nx.Graph()
+
+'''
+Choosing a path with the max capacities in the channel. 
+Ensure that the payment is routed through the most optimal path in terms of capacity, not necessarily 
+the shortest path. This would help in avoiding bottelnecks due to insufficient funds.
+'''
 
 # Add nodes
 nodes = ['A', 'B', 'C', 'D', 'E', 'F', 'G']
@@ -45,13 +50,12 @@ def send_payment(graph, source, target, amount):
     # Adjust the weights along the path
     for i in range(len(max_capacity_path) - 1):
         u, v = max_capacity_path[i], max_capacity_path[i + 1]
-        # Subtract the amount from the capacity
         graph[u][v]['weight'] -= amount
         # Print the updated weight
         print(f"Edge ({u}, {v}) new capacity: {graph[u][v]['weight']}")
 
-# Send a payment of 50 from A to G
-send_payment(G, 'A', 'G', 50)
+# Send a payment of 20 from A to G
+send_payment(G, 'A', 'G', 20)
 
 # Print the updated graph capacities
 for u, v, data in G.edges(data=True):
