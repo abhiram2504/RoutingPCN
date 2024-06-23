@@ -9,11 +9,11 @@ Ensure that the payment is routed through the most optimal path in terms of capa
 the shortest path. This would help in avoiding bottelnecks due to insufficient funds.
 '''
 
-# Add nodes
+# nodes
 nodes = ['A', 'B', 'C', 'D', 'E', 'F', 'G']
 G.add_nodes_from(nodes)
 
-# Add edges with varying capacities
+# edges
 edges = [
     ('A', 'B', 50), ('A', 'C', 100), ('A', 'G', 10),
     ('B', 'D', 100), ('B', 'E', 100), ('B', 'G', 10),
@@ -47,11 +47,10 @@ def send_payment(graph, source, target, amount):
     
     print(f"Sending payment of {amount} from {source} to {target} via path {max_capacity_path}")
     
-    # Adjust the weights along the path
+    # Adjusting the weights
     for i in range(len(max_capacity_path) - 1):
         u, v = max_capacity_path[i], max_capacity_path[i + 1]
         graph[u][v]['weight'] -= amount
-        # Print the updated weight
         print(f"Edge ({u}, {v}) new capacity: {graph[u][v]['weight']}")
 
 # Send a payment of 20 from A to G
@@ -62,7 +61,7 @@ for u, v, data in G.edges(data=True):
     print(f"Edge ({u}, {v}) capacity: {data['weight']}")
 
 # Draw the updated network
-pos = nx.spring_layout(G)  # positions for all nodes
+pos = nx.spring_layout(G)  
 nx.draw_networkx_nodes(G, pos)
 nx.draw_networkx_edges(G, pos)
 nx.draw_networkx_labels(G, pos)

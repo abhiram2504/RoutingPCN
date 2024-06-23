@@ -27,7 +27,6 @@ def generate_random_payments(demand_matrix, num_rounds):
                     payments[r, i, j] = np.random.geometric(p)  # Assign payment to corresponding round, i, and j
     return payments
 
-
 # Route payments through the network and update capacities
 def route_and_update(graph, payments):
     success_payments = []
@@ -43,35 +42,43 @@ def route_and_update(graph, payments):
                         failed_payments.append((i, j, payment))
     return success_payments, failed_payments
 
-matrix_size = int(input("Enter the matrix size: "))
+# Main function
+def main():
+    matrix_size = int(input("Enter the matrix size: "))
+    p = 0.8  
+    G = generate_renyi_random_graph_with_weights(matrix_size, p)
 
-p = 0.8  
-G = generate_renyi_random_graph_with_weights(matrix_size, p)
+    # Generate a uniform demand matrix
+    T = gdm.generate_demand_matrix(G, 1000)
 
-# Generate a uniform demand matrix
-T = gdm.generate_demand_matrix(G, 1000)
+    print("Demand Matrix:")
+    print(T)
 
-print("Demand Matrix:")
-print(T)
+    num_rounds = int(input("Enter the number of rounds: "))
 
-num_rounds = int(input("Enter the number of rounds: "))
+    # Generate payments based on the demand matrix
+    payments = generate_random_payments(T, num_rounds)
 
-# Generate payments based on the demand matrix
-payments = generate_random_payments(T, num_rounds)
+    # Route payments through the network and update capacities
+    success_payments, failed_payments = route_and_update(G, payments)
 
-# Route payments through the network and update capacities
-success_payments, failed_payments = route_and_update(G, payments)
+    print("Successful Payments:")
+    for payment in success_payments:
+        print(f"From Node {payment[0]} to Node {payment[1]}: {payment[2]}")
 
-print("Successful Payments:")
-for payment in success_payments:
-    print(f"From Node {payment[0]} to Node {payment[1]}: {payment[2]}")
+    print(f"The number of successful payments is {len(success_payments)}")
 
-print(f"The number of succ payments are {len(success_payments)}")
+    print("\nFailed Payments:")
+    for payment in failed_payments:
+        print(f"From Node {payment[0]} to Node {payment[1]}: {payment[2]}")
 
-print("\nFailed Payments:")
-for payment in failed_payments:
-    print(f"From Node {payment[0]} to Node {payment[1]}: {payment[2]}")
+    print(f"The number of failed payments is {len(failed_payments)}")
 
-print(f"The number of failed payments are {len(failed_payments)}")
+    # Calculate and print throughput as a percentage of total demand capacity
+    total_successful_payments = sum(payment[2] for payment in success_payments)
+    total_demand_capacity = np.sum(T)
+    throughput_percentage = (total_successful_payments / total_demand_capacity) * 100
+    print(f"Throughput: {throughput_percentage:.2f}% of total demand capacity")
 
-rt.visualize_demand_graph(T)
+if __name__ == '__main__':
+    main()
