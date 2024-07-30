@@ -27,6 +27,9 @@ def routing(matrix_payment_seq):
     return paths
 
 
+
+
+
 def route_payment(graph, source, destination, amount):
     try:
         shortest_path = nx.dijkstra_path(graph, source, destination)
