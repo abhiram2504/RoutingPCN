@@ -23,8 +23,10 @@ def route_payment_round(graph, demand_matrix, credit_matrix):
                 if min_credit >= demand:
                     # Successful payment scenario
                     for u, v in zip(path[:-1], path[1:]):
-                        # Deduct the demand amount from the credit matrix
+                        # Deduct the demand amount from the credit matrix on the forward path
                         credit_matrix[u][v] -= demand
+                        # Add the demand amount to the credit matrix on the reverse path (optional, if undirected)
+                        credit_matrix[v][u] += demand
                     # Record the successful payment
                     success_payments.append((i, j, demand))
                     # Update the demand matrix to reflect that the demand has been fulfilled
@@ -32,8 +34,10 @@ def route_payment_round(graph, demand_matrix, credit_matrix):
                 else:
                     # Partial payment scenario
                     for u, v in zip(path[:-1], path[1:]):
-                        # Deduct the maximum possible amount from the credit matrix
+                        # Deduct the maximum possible amount from the credit matrix on the forward path
                         credit_matrix[u][v] -= min_credit
+                        # Add the deducted amount to the credit matrix on the reverse path (optional, if undirected)
+                        credit_matrix[v][u] += min_credit
                     # Record the partial payment
                     failed_payments.append((i, j, min_credit))
                     # Update the demand matrix to reflect the remaining demand

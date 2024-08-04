@@ -11,7 +11,6 @@ def generate_demand_matrix():
         demand_mat[1, 0] = 1.
         demand_mat[1, 3] = 1.
         demand_mat[3, 1] = 1. 
-        print(demand_mat)
 
     elif SRC_TYPE == "uniform":
         pass

@@ -7,6 +7,5 @@ def generate_credit_matrix():
 
     if CREDIT_TYPE == 'uniform':
         credit_mat = np.ones([n, n]) * CREDIT_AMT
-
-    print(credit_mat)
+        
     return credit_mat
