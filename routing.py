@@ -1,47 +1,75 @@
-import numpy as np
 import networkx as nx
-import matplotlib.pyplot as plt
+import numpy as np
 
-# Function to visualize the demand graph
-def visualize_demand_graph(demand_matrix):
-    G = nx.Graph()  # Create an empty graph
-    for i in range(len(demand_matrix)):
-        for j in range(len(demand_matrix[0])):
-            if i != j:
-                G.add_edge(i, j, demand=demand_matrix[i, j])  # Add an edge between nodes i and j with demand
-    pos = nx.spring_layout(G)  # Compute node positions using the spring layout algorithm
-    nx.draw(G, pos, with_labels=True, node_color='skyblue', edge_color='black')
-    plt.show()
-    return G
+# Function to route payments for one round
+def route_payment_round(graph, demand_matrix, credit_matrix):
+    num_nodes = len(demand_matrix)  # Number of nodes in the network
+    success_payments = []  # List to keep track of successful payments
+    failed_payments = []  # List to keep track of failed payments
 
-def routing(matrix_payment_seq):
-    G = visualize_demand_graph(matrix_payment_seq[0])
-    paths = []
-    for i in range(len(matrix_payment_seq)):
-        path = []
-        for source in G.nodes():
-            for target in G.nodes():
-                if source != target:
-                    path.append(nx.dijkstra_path(G, source, target, weight='demand'))
-        paths.append(path)
-    return paths
+    # Iterate over all pairs of nodes
+    for i in range(num_nodes):
+        for j in range(num_nodes):
+            if i != j and demand_matrix[i, j] > 0:  # Exclude self-pairs and zero demand pairs
+                # Find the shortest path between source i and target j
+                path = nx.shortest_path(graph, source=i, target=j)
+                
+                # Determine the minimum credit available along the path
+                min_credit = min(credit_matrix[u][v] for u, v in zip(path[:-1], path[1:]))
+                
+                # Get the demand for this source-destination pair
+                demand = demand_matrix[i, j]
 
+                if min_credit >= demand:
+                    # Successful payment scenario
+                    for u, v in zip(path[:-1], path[1:]):
+                        # Deduct the demand amount from the credit matrix
+                        credit_matrix[u][v] -= demand
+                    # Record the successful payment
+                    success_payments.append((i, j, demand))
+                    # Update the demand matrix to reflect that the demand has been fulfilled
+                    demand_matrix[i, j] = 0
+                else:
+                    # Partial payment scenario
+                    for u, v in zip(path[:-1], path[1:]):
+                        # Deduct the maximum possible amount from the credit matrix
+                        credit_matrix[u][v] -= min_credit
+                    # Record the partial payment
+                    failed_payments.append((i, j, min_credit))
+                    # Update the demand matrix to reflect the remaining demand
+                    demand_matrix[i, j] -= min_credit
 
+                # After routing for one pair, stop and return the results
+                return success_payments, failed_payments
 
+    # Return results if no payments were routed in this round
+    return success_payments, failed_payments
 
+# Function to simulate routing over multiple rounds
+def simulate_routing(demand_matrix, credit_matrix, num_rounds, graph):
+    all_success_payments = []  # List to keep track of all successful payments
+    all_failed_payments = []  # List to keep track of all failed payments
 
-def route_payment(graph, source, destination, amount):
-    try:
-        shortest_path = nx.dijkstra_path(graph, source, destination)
-        # Check if the path has enough capacity to route the payment
-        for i in range(len(shortest_path) - 1):
-            capacity = graph[shortest_path[i]][shortest_path[i+1]]['weight']
-            if amount > capacity:
-                return False  # Insufficient capacity, fail the payment
-        # Route the payment and update channel capacities
-        for i in range(len(shortest_path) - 1):
-            # Deduct payment amount from channel capacity
-            graph[shortest_path[i]][shortest_path[i+1]]['weight'] -= amount
-        return True  # Payment successfully routed
-    except nx.NetworkXNoPath:
-        return False  # No path found between source and destination
+    # Iterate over the number of rounds
+    for round_num in range(1, num_rounds + 1):
+        # Route payments for this round
+        success_payments, failed_payments = route_payment_round(graph, demand_matrix, credit_matrix)
+        # Add this round's payments to the overall lists
+        all_success_payments.extend(success_payments)
+        all_failed_payments.extend(failed_payments)
+        
+        # Print the results for this round
+        print(f"Round {round_num}:")
+        print("Successful payments:", success_payments)
+        print("Failed payments:", failed_payments)
+        print("Updated demand matrix:")
+        print(demand_matrix)
+        print("Updated credit matrix:")
+        print(credit_matrix)
+
+        # Check if all demands have been fulfilled
+        if np.all(demand_matrix == 0):
+            print(f"All demands fulfilled at round {round_num}")
+            break  # Exit the loop if all demands are fulfilled
+
+    return all_success_payments, all_failed_payments
