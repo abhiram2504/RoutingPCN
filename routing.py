@@ -1,12 +1,28 @@
 import networkx as nx
 import numpy as np
 import random
+import sys
+
+from utils import *
 
 def low_stretch_spanning_tree(graph):
     """Generate a low-stretch spanning tree of the graph."""
-    # https://github.com/danspielman/Laplacians.jl/blob/master/docs/src/LSST.md
-    # Using to generate a single MST
+    # Placeholder for generating an actual low-stretch spanning tree
+    # For now, we'll use the minimum spanning tree as a proxy
     return nx.minimum_spanning_tree(graph)
+
+def shortest_path_trees(graph):
+    """Generate shortest path trees rooted at each node.
+    It calculates the shortest paths from that node to all other nodes"""
+    trees = {}
+    for node in graph.nodes:
+        # Generate the shortest path tree rooted at this node
+        tree = nx.single_source_shortest_path(graph, source=node)
+        trees[node] = tree
+    
+    print(trees)
+    sys.exit(0)
+    return trees
 
 # Function to route payments for one round
 def route_payment_round(graph, demand_matrix, credit_matrix, path_type="shortest", idle_paths=None):
@@ -18,94 +34,124 @@ def route_payment_round(graph, demand_matrix, credit_matrix, path_type="shortest
     if idle_paths is None:
         idle_paths = {frozenset([i, j]): 0 for i in range(num_nodes) for j in range(num_nodes) if i != j}
 
+    # Get shortest path trees
+    shortest_trees = shortest_path_trees(graph)
+
+    # Shuffle the order of the trees if using LSST
+    if path_type == "lsst":
+        tree_order = list(shortest_trees.keys())
+        random.shuffle(tree_order)
+
     # Function to select paths based on the path type
-    def select_path(source, target, path_type):
+    def select_path(source, target, path_type, used_trees=None):
         print(f"Routing from node {source} to node {target} using {path_type} path.")
         if path_type == "shortest":
             # Shortest path routing
-            return nx.shortest_path(graph, source=source, target=target)
+            path = nx.shortest_path(graph, source=source, target=target)
+            print(f"Path taken: {path}")
+            return path  # Return only the path
+                
         elif path_type == "random":
             # Random path routing
             paths = list(nx.all_simple_paths(graph, source=source, target=target))
-            return random.choice(paths) if paths else None
-        # Has to checked again
-        elif path_type == "uniform":
-            pass
-            # Uniform routing: 
-        #     paths = list(nx.all_simple_paths(graph, source=source, target=target))
-        #     if not paths:
-        #         return None
+            if paths:
+                path = random.choice(paths)
+                print(f"Path taken: {path}")
+                return path  # Return only the path
+            else:
+                print("No paths available.")
+                return None
 
-        #     # Find the path with the maximum idle time
-        #     max_idle_time = -1
-        #     selected_path = None
-        #     for path in paths:
-        #         idle_time = min(idle_paths[frozenset([u, v])] for u, v in zip(path[:-1], path[1:]))
-        #         if idle_time > max_idle_time:
-        #             max_idle_time = idle_time
-        #             selected_path = path
+        elif path_type == "lsst":
+            used_trees = set() if used_trees is None else used_trees
 
-        #     return selected_path
-        # else:
-        #     raise ValueError(f"Invalid path type: {path_type}")
+            # Route using the random order of shortest path trees
+            for tree_key in tree_order:
+                if tree_key in used_trees:
+                    continue
+                tree = shortest_trees[tree_key]
+                if target in tree:
+                    path = tree[target]
+                    used_trees.add(tree_key)
+                    print(f"Path taken from tree rooted at {tree_key}: {path}")
+                    return path, used_trees  # Return both the path and the used trees
+            print(f"No path found from node {source} to node {target} in any tree.")
+            return None, used_trees
+
+        else:
+            raise ValueError(f"Invalid path type: {path_type}")
+
+    
 
     # Iterate over all pairs of nodes
     for i in range(num_nodes):
         for j in range(num_nodes):
             if i != j and demand_matrix[i, j] > 0:  # Exclude self-pairs and zero demand pairs
-                # Select the path based on the routing strategy
-                path = select_path(i, j, path_type)
-                
-                if path is None:
-                    continue  # Skip if no path is found
+                used_trees = set()  # Reset used trees for each payment attempt
+                demand_left = demand_matrix[i, j]
+
+                # Modify the part where select_path is called:
+                if path_type == "lsst":
+                    path, used_trees = select_path(i, j, path_type, used_trees)
+                else:
+                    path = select_path(i, j, path_type)
+
+                if path is None or len(path) < 2:
+                    print(f"No valid path found for nodes {i} -> {j}. Skipping.")
+                    continue  # Skip to the next pair if no valid path found
 
                 # Determine the minimum credit available along the path
                 min_credit = min(credit_matrix[u][v] for u, v in zip(path[:-1], path[1:]))
-                
-                # Get the demand for this source-destination pair
+
+                # Calculate how much we can actually send
                 demand = demand_matrix[i, j]
 
                 if min_credit >= demand:
-                    # Successful payment scenario
+                    # Successful or partial payment scenario
                     for u, v in zip(path[:-1], path[1:]):
-                        # Deduct the demand amount from the credit matrix on the forward path
+                        # Deduct the amount from the credit matrix on the forward path
                         credit_matrix[u][v] -= demand
-                        # Add the demand amount to the credit matrix on the reverse path (optional, if undirected)
+                        # Add the amount to the credit matrix on the reverse path (optional, if undirected)
                         credit_matrix[v][u] += demand
-                    # Record the successful payment
-                    success_payments.append((i, j, demand))
-                    # Update the demand matrix to reflect that the demand has been fulfilled
-                    demand_matrix[i, j] = 0
+
+                    # Record the payment
+                    if demand == demand_left:
+                        success_payments.append((i, j, demand))
+                        demand_matrix[i, j] = 0  # Update the demand matrix
+                        demand_left = 0
+
 
                     # Update the idle times for the path used
                     for u, v in zip(path[:-1], path[1:]):
                         idle_paths[frozenset([u, v])] = 0
+
+                    if path_type == "lsst":
+                        print(f"LSST path completed for nodes {i} -> {j}. Moving to the next round.")
+                        return success_payments, failed_payments, idle_paths
                 else:
-                    # Partial payment scenario
                     for u, v in zip(path[:-1], path[1:]):
                         # Deduct the maximum possible amount from the credit matrix on the forward path
                         credit_matrix[u][v] -= min_credit
                         # Add the deducted amount to the credit matrix on the reverse path (optional, if undirected)
                         credit_matrix[v][u] += min_credit
-                    # Record the partial payment
-                    failed_payments.append((i, j, min_credit))
                     # Update the demand matrix to reflect the remaining demand
                     demand_matrix[i, j] -= min_credit
 
-                    # Update the idle times for the path used
-                    for u, v in zip(path[:-1], path[1:]):
-                        idle_paths[frozenset([u, v])] = 0
+
+                # if demand_left == 0:
+                #     break  # Move to the next payment once this one is completed
 
                 # Increment the idle time for all other paths
                 for k in range(num_nodes):
                     for l in range(num_nodes):
                         if k != l and (k, l) != (i, j):
                             idle_paths[frozenset([k, l])] += 1
-
+            
                 # After routing for one pair, stop and return the results
                 return success_payments, failed_payments, idle_paths
 
-    # Return results if no payments were routed in this round
+
+    # Return results
     return success_payments, failed_payments, idle_paths
 
 # Function to simulate routing over multiple rounds
@@ -117,6 +163,9 @@ def simulate_routing(demand_matrix, credit_matrix, num_rounds, graph, path_type=
     # Iterate over the number of rounds
     for round_num in range(1, num_rounds + 1):
         # Route payments for this round
+
+        path_type = PATH_TYPE
+
         success_payments, failed_payments, idle_paths = route_payment_round(
             graph, demand_matrix, credit_matrix, path_type, idle_paths
         )
@@ -137,5 +186,6 @@ def simulate_routing(demand_matrix, credit_matrix, num_rounds, graph, path_type=
         if np.all(demand_matrix == 0):
             print(f"All demands fulfilled at round {round_num}")
             break  # Exit the loop if all demands are fulfilled
+
 
     return all_success_payments, all_failed_payments

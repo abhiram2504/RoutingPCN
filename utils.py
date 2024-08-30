@@ -15,3 +15,6 @@ GRAPH_SIZE = 4
 
 """ Number of rounds """
 ROUNDS = GRAPH_SIZE*GRAPH_SIZE
+
+""" Path type """
+PATH_TYPE = "lsst"

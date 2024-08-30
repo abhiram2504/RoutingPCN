@@ -66,13 +66,13 @@ def main():
     print(f"Number of source-destination pairs: {num_pairs}")
 
     # Visualize the initial graph
-    visualize_graph(G)
+    # visualize_graph(G)
 
     all_success_payments, all_failed_payments = rt.simulate_routing(demand_mat, credit_mat, num_rounds, G)
     # Output final results
     print("Final successful payments:", all_success_payments)
     print("Final failed payments:", all_failed_payments)
-    print(f"Throughput: {len(all_success_payments)/(len(all_success_payments)+len(all_failed_payments))}")
+    #print(f"Throughput: {len(all_success_payments)/(len(all_success_payments)+len(all_failed_payments))}")
 
 if __name__ == '__main__':
     main()

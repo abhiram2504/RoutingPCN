@@ -1,0 +1,56 @@
+Have 4 paths choices:
+
+
+Model: 
+Round -> Each round select a src destination pair. 
+
+
+The rounds should be equal to n x m
+
+
+For that round the src makes a choice which path it attempts to make the payments on.
+Once it makes the choice then the payment 
+1) Choose 1 out of the 4 paths. 
+
+
+Example
+4 rounds
+edge capacity - 1. (for each)
+demand:
+2: u->v
+2: v->u
+
+Round 1:
+uzv
+Round 2:
+vyu
+Round 3:
+uzv (fail)
+uyv (success)
+Round 4:
+vyu (succ)
+vzu (fail)
+
+Have a round robin simulation between paths 
+
+#rounds = #demand
+
+Have a parameters file (utils.py)
+
+Path selection algo (func):
+	tell what type of path selection do you want
+	1) round robin (sequential)
+	2) random paths
+	3) probability (uniform)
+	4) probability (non-uniform)
+	5) Common randomess
+
+
+For path selection use the type of paths from edge base lp
+
+
+Low stretch spanning tree can be incorporated into the routing. (The routing scheme) The original PCN and break it into a a family of spanning trees.
+
+Have different path choices and different graph choices
+
+Having a cyclic demand
