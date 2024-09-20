@@ -17,4 +17,8 @@ GRAPH_SIZE = 4
 ROUNDS = GRAPH_SIZE*GRAPH_SIZE
 
 """ Path type """
-PATH_TYPE = "lsst"
+PATH_TYPE = "shortest"
+
+""" To reduce the weight on the edges (Creating Spanning trees)"""
+ALPHA = 0.9
+MIN_ALPHA = 0.5

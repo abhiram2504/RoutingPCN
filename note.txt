@@ -1,0 +1,32 @@
+
+9/14
+Currently having problems:
+1) Currently if a payment is not possible to route then I go to the next round. 
+The problem arrise if a payment is not possible to route, I keep checking untill the number of rounds are over.
+When do I stop to check if a payment if not possible?
+Do I route it using all the spanning trees and if its isnt possible to route in anyone of them
+I delcare it as unsucceful, should I do this in a single round?
+
+Round the weight to the hundreths place.
+
+Average 
+
+
+(Round)
+Each round would jsut have one attempt (hope its a success)
+fails then you loose that round 
+
+6  -> st
+
+Notion of epoch: (and ordering of trees within an epoch) [6 rounds]
+
+[Start by using the trees from the ordering]
+
+unsucceful path list ->
+
+for each src->dest pair (i,j) ; there would be a list of unsuccesful paths. At the end of epoch poch everthing is reset. 
+
+create cycles of random (random length) 
+
+
+

@@ -1,5 +1,6 @@
 import numpy as np
 from utils import *
+import random as rand
 
 def generate_demand_matrix():
 
@@ -7,13 +8,14 @@ def generate_demand_matrix():
 
     if SRC_TYPE == "test":
         demand_mat = np.zeros([n, n])
-        demand_mat[0, 1] = 1.
-        demand_mat[1, 0] = 1.
-        demand_mat[1, 3] = 1.
-        demand_mat[3, 1] = 1. 
-        demand_mat[2,1] = 2.
+        demand_mat[0, 1] = 2.
+        demand_mat[1, 2] = 3.
+
     elif SRC_TYPE == "uniform":
-        pass
+        demand_mat = np.ones([n, n])
+        np.fill_diagonal(demand_mat, 0.0)       
+        demand_mat = demand_mat * rand.randint(0, CREDIT_AMT) 
+
 
     return demand_mat
 
