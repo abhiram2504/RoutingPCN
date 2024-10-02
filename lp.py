@@ -1,3 +1,4 @@
+import time
 import numpy as np
 import networkx as nx
 import matplotlib.pyplot as plt
@@ -6,26 +7,9 @@ import generate_demand_matrix as gdm
 import cost_matrix as cm
 
 import routing as rt
-# import tmp_rout as rt
 
+from graph import generate_graph, visualize_graph
 from utils import *
-
-
-def generate_test_graph():
-    graph = nx.Graph()
-    credit_mat = cm.generate_credit_matrix()
-    #the weight is uniform
-    graph.add_edge(0, 1, weight=credit_mat[0][1] + credit_mat[1][0])
-    graph.add_edge(1, 2, weight=credit_mat[1][2] + credit_mat[2][1])
-    graph.add_edge(2, 3, weight=credit_mat[2][3] + credit_mat[3][2])
-    graph.add_edge(3, 0, weight=credit_mat[3][0] + credit_mat[0][0])
-    return graph
-
-def generate_graph():
-    G = nx.erdos_renyi_graph(GRAPH_SIZE, 0.8)
-    nx.draw(G, with_labels=True)
-    return G
-
 
 def calculate_src_dest_pairs(demand_matrix):
     count = 0
@@ -36,39 +20,46 @@ def calculate_src_dest_pairs(demand_matrix):
                 count += 1
     return count
 
-# Function to visualize the graph 
-def visualize_graph(graph):
-    pos = nx.spring_layout(graph)  
-    plt.figure(figsize=(8, 6)) 
-
-    nx.draw_networkx_nodes(graph, pos, node_size=700, node_color='skyblue')
-    nx.draw_networkx_edges(graph, pos, edgelist=graph.edges(data=True), width=2)
-
-    labels = {node: str(node) for node in graph.nodes()}
-    nx.draw_networkx_labels(graph, pos, labels, font_size=12)
-
-    plt.title("Network Graph")
-    plt.show()
-
 # Main function
 def main():
     G = generate_graph()
     demand_mat = gdm.generate_demand_matrix()
     credit_mat = cm.generate_credit_matrix()
+    print(demand_mat)
+    print(credit_mat)
+
+    # sleep(7)
+
     num_rounds = ROUNDS
     print(f"The number of rounds are: {num_rounds}")
     # Calculate the number of source-destination pairs
     num_pairs = calculate_src_dest_pairs(demand_mat)
     print(f"Number of source-destination pairs: {num_pairs}")
 
+
+    if num_rounds < num_pairs:
+        print("The demand matrix cannot be satisfied as there are less rounds than the total number of src dest pairs")
+        exit(0)
+
     # Visualize the initial graph
     visualize_graph(G)
+    path_type = PATH_TYPE
 
-    all_success_payments, all_failed_payments = rt.simulate_routing(demand_mat, credit_mat, num_rounds, G)
+    start_time = time.time()
+    all_success_payments, all_failed_payments = rt.simulate_routing(demand_mat, credit_mat, G, path_type)
+    end_time = time.time()
+
+    
     # Output final results
     print("Final successful payments:", all_success_payments)
     print("Final failed payments:", all_failed_payments)
-    # print(f"Throughput: {len(all_success_payments)/(len(all_success_payments)+len(all_failed_payments))}")
+
+    num_failed_payments = len(all_failed_payments)
+
+    print(f"Throughput: {(num_pairs-num_failed_payments)/num_pairs}")
+
+    print(f"Total time to simulate the payments: {end_time-start_time}")
 
 if __name__ == '__main__':
     main()
+
