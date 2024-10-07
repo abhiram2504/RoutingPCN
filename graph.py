@@ -18,17 +18,18 @@ def generate_graph():
         graph.add_edge(3, 0, weight=credit_mat[3][0] + credit_mat[0][0])
         return graph
     elif GRAPH_TYPE == "erdos-renyi":
-        G = nx.erdos_renyi_graph(GRAPH_SIZE, ERDOS_P_EDGE)
+        G = nx.erdos_renyi_graph(GRAPH_SIZE, ERDOS_P_EDGE, RAND_SEED)
         # Setting the graph weight or the capacties
         if not nx.is_connected(G):
             print("Graph is not connected.")
             exit(0)
         for u, v in G.edges():
             G[u][v]['weight'] = 2 * CREDIT_AMT
-        nx.draw(G, with_labels=True)
+        # nx.draw(G, with_labels=True)
         return G
     elif GRAPH_TYPE == "grid":
-        pass
+        G = nx.grid_2d_graph(GRID_GRAPH_SIZE, GRID_GRAPH_SIZE)
+        return G
 
 # Function to visualize the graph 
 def visualize_graph(graph):

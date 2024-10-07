@@ -6,10 +6,11 @@ from utils import *
 
 from spanning import generate_and_validate_spanning_trees
 
-
+TOTAL_DEMAND_FAILED = 0
     
 # Function to route a single payment for one round
 def route_single_payment(graph, demand_matrix, credit_matrix, source, target, path_type="shortest", tree = None):
+    global TOTAL_DEMAND_FAILED
     success_payments = []  # List to keep track of successful payments
     failed_payments = []  # List to keep track of failed payments
 
@@ -49,6 +50,8 @@ def route_single_payment(graph, demand_matrix, credit_matrix, source, target, pa
 
     demand = demand_matrix[source, target]
     # Only attempt to route the specific payment for the current (source, target) pair
+
+
     if demand > 0:  # Exclude zero demand pairs
         
         # Attempt to route on all spanning trees if using LSST
@@ -71,7 +74,7 @@ def route_single_payment(graph, demand_matrix, credit_matrix, source, target, pa
                 success_payments.append((source, target, demand))
                 demand_matrix[source, target] -= demand  # Update the demand matrix
             elif min_credit == 0:
-                # failed_payments.append((source, target, demand_matrix[source, target]))
+                failed_payments.append((source, target, demand_matrix[source, target]))
                 return success_payments, failed_payments
             else:
                 for u, v in zip(path[:-1], path[1:]):
@@ -85,6 +88,7 @@ def route_single_payment(graph, demand_matrix, credit_matrix, source, target, pa
 
             if path is None:
                 failed_payments.append((source, target, demand))
+                TOTAL_DEMAND_FAILED += demand_matrix[source, target]    
                 demand_matrix[source, target] = 0
                 return success_payments, failed_payments  # Skip further processing
             else:
@@ -100,6 +104,7 @@ def route_single_payment(graph, demand_matrix, credit_matrix, source, target, pa
                     demand_matrix[source, target] = 0
                 elif min_credit == 0:
                     failed_payments.append((source, target, demand_matrix[source, target]))
+                    TOTAL_DEMAND_FAILED += demand_matrix[source, target]    
                     demand_matrix[source, target] = 0
                     return success_payments, failed_payments
                 else:
@@ -162,7 +167,9 @@ def simulate_routing(demand_matrix, credit_matrix, graph, path_type=PATH_TYPE):
                 # Check if all demands have been fulfilled after each attempt
                 if np.all(demand_matrix == 0):
                     print(f"All demands fulfilled by round {round_num}")
-                    break  # Exit the loop if all demands are fulfilled
+                    break  
+
+                if round_num >= ROUNDS: break
 
         return all_success_payments, all_failed_payments
     else:

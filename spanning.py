@@ -97,10 +97,9 @@ def visualize_spanning_trees(graph, spanning_tree_list):
         # Add spanning tree edges to the union
         tree_edges = set(T.edges())
         all_spanning_tree_edges.update(tree_edges)
-
-        
+          
         # Decrease the weights of the edges used in the current spanning tree
-        decrease_edge_weights(graph, tree_edges)
+        # decrease_edge_weights(graph, tree_edges)
 
         # Plot the original graph with reduced opacity
         # nx.draw(graph, pos, with_labels=True, node_size=700, node_color='lightblue', font_size=16, font_weight='bold', edge_color='gray', ax=axs[i], alpha=0.5)
