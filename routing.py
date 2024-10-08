@@ -30,7 +30,7 @@ def route_single_payment(graph, demand_matrix, credit_matrix, source, target, pa
 
         elif path_type == "random":
             # Random path routing
-            paths = list(nx.all_simple_paths(graph, source=source, target=target, cutoff=10))
+            paths = list(nx.all_simple_paths(graph, source=source, target=target, cutoff=NUM_PATHS_SHORT))
             if paths:
                 path = random.choice(paths)
                 return path

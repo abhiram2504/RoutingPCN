@@ -31,7 +31,7 @@ ROUNDS = 10 * GRAPH_SIZE
 PATH_TYPE = "random"
 
 """ Number of paths(shortest) """
-# 
+NUM_PATHS_SHORT = 3
 
 """ Epoch Len """
 EPOCH_LEN = GRAPH_SIZE**2 - GRAPH_SIZE
