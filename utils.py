@@ -1,49 +1,58 @@
 """ Graph type """
 GRAPH_TYPE = 'erdos-renyi'
 
-""" Demand matrix """
-"""
+""" Graph Size """
+GRAPH_SIZE = 8
+# When using a grid graph
+GRID_GRAPH_SIZE = 5
+
+""" Demand matrix
 Types of demand:
 circular
 test
 uniform
 """
+DEMAND_TYPE = 'uniform'
+MEAN = 10
+STD_DEV = 1
 
-DEMAND_TYPE = 'circular'
-MEAN = 4
-STD_DEV = 4
+""" Demand Type, valid for uniform or test demand """
+DEMAND_AMT = 100
 
-""" Credit matrix """
+""" Credit matrix
+Types:
+uniform
+random
+"""
 CREDIT_TYPE = 'uniform'
 
 """ Credit Amount """
-CREDIT_AMT =  1
-
-""" Graph Size """
-GRAPH_SIZE = 100
-
-GRID_GRAPH_SIZE = 5
+CREDIT_AMT =  50
 
 """ Number of rounds """
-ROUNDS = 10 * GRAPH_SIZE
+ROUNDS = GRAPH_SIZE*1
 
-""" Path type """
-PATH_TYPE = "random"
+""" Path type
+shortest
+random
+lsst
+"""
+PATH_TYPE = "shortest"
 
 """ Number of paths(shortest) """
 NUM_PATHS_SHORT = 3
 
 """ Epoch Len """
-EPOCH_LEN = GRAPH_SIZE**2 - GRAPH_SIZE
+EPOCH_LEN = GRAPH_SIZE
+RESET_EPOCH = EPOCH_LEN
 
-""" Demand Type, valid for uniform or test demand """
-DEMAND_AMT = 15000
+""" Number of paths(random) """
 
 """ The parameter for erdos renyi """
-ERDOS_P_EDGE = 0.5
+ERDOS_P_EDGE = 0.3
 
 """ To increase the weight on the edges (Creating Spanning trees)"""
-ALPHA = 1.2
+ALPHA = 1.5
 
 """ RAND SEED """
 RAND_SEED = 12 # This is to create the credit for each node

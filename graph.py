@@ -25,7 +25,7 @@ def generate_graph():
             exit(0)
         for u, v in G.edges():
             G[u][v]['weight'] = 2 * CREDIT_AMT
-        # nx.draw(G, with_labels=True)
+        # visualize_graph(G)
         return G
     elif GRAPH_TYPE == "grid":
         G = nx.grid_2d_graph(GRID_GRAPH_SIZE, GRID_GRAPH_SIZE)

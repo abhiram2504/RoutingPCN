@@ -5,11 +5,12 @@ from collections import Counter
 from utils import *
 
 from spanning import generate_and_validate_spanning_trees
+from graph import visualize_graph
 
 TOTAL_DEMAND_FAILED = 0
     
 # Function to route a single payment for one round
-def route_single_payment(graph, demand_matrix, credit_matrix, source, target, path_type="shortest", tree = None):
+def route_single_payment(graph, demand_matrix, credit_matrix, source, target, path_type, tree = None):
     global TOTAL_DEMAND_FAILED
     success_payments = []  # List to keep track of successful payments
     failed_payments = []  # List to keep track of failed payments
@@ -38,12 +39,13 @@ def route_single_payment(graph, demand_matrix, credit_matrix, source, target, pa
                 return None
 
         elif path_type == "lsst":
-            lsst_tree = tree
-            if nx.has_path(lsst_tree, source, target):
+            # visualize_graph(tree)
+            if nx.has_path(tree, source, target):
                 # Get the shortest path
                 path = nx.shortest_path(graph, source=source, target=target)
                 return path
             else:
+                print(f"There spans no path from {source} to {target}")
                 return None
         else:
             raise ValueError(f"Invalid path type: {path_type}")
@@ -53,7 +55,6 @@ def route_single_payment(graph, demand_matrix, credit_matrix, source, target, pa
 
 
     if demand > 0:  # Exclude zero demand pairs
-        
         # Attempt to route on all spanning trees if using LSST
         if path_type == "lsst":
             path = select_path(graph, source, target, path_type, tree=routing_tree)
@@ -62,15 +63,13 @@ def route_single_payment(graph, demand_matrix, credit_matrix, source, target, pa
             # Determine the minimum credit available along the path
             min_credit = min(credit_matrix[u][v] for u, v in zip(path[:-1], path[1:]))
             print(f"Source: {source}, destination: {target}.")
-
-            print(f"min_credit: {min_credit}, demand: {demand}")
+            print(f"min_credit: {min_credit}, demand: {demand}.")
 
             if min_credit >= demand:
                 # Successful payment scenario
                 for u, v in zip(path[:-1], path[1:]):
                     credit_matrix[u][v] -= demand
                     credit_matrix[v][u] += demand
-
                 success_payments.append((source, target, demand))
                 demand_matrix[source, target] -= demand  # Update the demand matrix
             elif min_credit == 0:
@@ -85,11 +84,11 @@ def route_single_payment(graph, demand_matrix, credit_matrix, source, target, pa
         # If not using LSST
         else:
             path = select_path(graph, source, target, path_type)
-
+            # It would not happen as I already test if a graph is connected or not adn there is always a path between two nodes in a connected graph
             if path is None:
                 failed_payments.append((source, target, demand))
                 TOTAL_DEMAND_FAILED += demand_matrix[source, target]    
-                demand_matrix[source, target] = 0
+                # demand_matrix[source, target] = 0
                 return success_payments, failed_payments  # Skip further processing
             else:
                 min_credit = min(credit_matrix[u][v] for u, v in zip(path[:-1], path[1:]))
@@ -101,11 +100,11 @@ def route_single_payment(graph, demand_matrix, credit_matrix, source, target, pa
                         credit_matrix[v][u] += demand
 
                     success_payments.append((source, target, demand))
-                    demand_matrix[source, target] = 0
+                    demand_matrix[source, target] -= demand  # Update the demand matrix
                 elif min_credit == 0:
                     failed_payments.append((source, target, demand_matrix[source, target]))
                     TOTAL_DEMAND_FAILED += demand_matrix[source, target]    
-                    demand_matrix[source, target] = 0
+                    # demand_matrix[source, target] = 0
                     return success_payments, failed_payments
                 else:
                     for u, v in zip(path[:-1], path[1:]):
@@ -144,7 +143,7 @@ def simulate_routing(demand_matrix, credit_matrix, graph, path_type=PATH_TYPE):
             for source, target in demand_pairs:
                 # Route a single payment for this src-dest pair
                 success_payments, failed_payments = route_single_payment(
-                    graph, demand_matrix, credit_matrix, source, target, path_type
+                    graph, demand_matrix, credit_matrix, source, target, path_type, tree=None
                 )
 
 
@@ -170,8 +169,9 @@ def simulate_routing(demand_matrix, credit_matrix, graph, path_type=PATH_TYPE):
                     break  
 
                 if round_num >= ROUNDS: break
+                
 
-        return all_success_payments, all_failed_payments
+        return all_success_payments, all_failed_payments, round_num
     else:
         spanning_trees = generate_and_validate_spanning_trees(graph)
         # Continue looping until the demand matrix is zero or until a set number of rounds are executed
@@ -179,7 +179,7 @@ def simulate_routing(demand_matrix, credit_matrix, graph, path_type=PATH_TYPE):
             demand_pairs = [(i, j) for i in range(len(demand_matrix)) for j in range(len(demand_matrix)) if i != j and demand_matrix[i][j] > 0]
            
             
-            # choosinga a random tree an d adding it to the set
+            # choosing a random tree and adding it to the set
             tree = random.choice(spanning_trees)
             used_trees.add(tree)
 
@@ -187,13 +187,14 @@ def simulate_routing(demand_matrix, credit_matrix, graph, path_type=PATH_TYPE):
                 used_trees.clear()
                 tree = random.choice(spanning_trees)
                 used_trees.add(tree)
+                
 
             if EPOCH_LEN<0:
                 spanning_tree_set = set(spanning_trees)
                 intersection = spanning_tree_set.intersection(used_trees)
                 tree = random.choice(list(intersection))
-                EPOCH_LEN = GRAPH_SIZE**2 - GRAPH_SIZE
-            
+                EPOCH_LEN = RESET_EPOCH
+                
             # Check if there are any demand pairs to route
             if not demand_pairs:
                 print("No more valid demand pairs to route.")
@@ -225,16 +226,22 @@ def simulate_routing(demand_matrix, credit_matrix, graph, path_type=PATH_TYPE):
 
                 # Check if all demands have been fulfilled after each attempt
                 if np.all(demand_matrix == 0):
-                    print(f"All demands fulfilled by round {round_num}")
+                    # print(f"All demands fulfilled by round {round_num}")
                     break  # Exit the loop if all demands are fulfilled
 
                 if round_num >= ROUNDS: break
-            
+                
+                if EPOCH_LEN<0:
+                    spanning_tree_set = set(spanning_trees)
+                    intersection = spanning_tree_set.intersection(used_trees)
+                    tree = random.choice(list(intersection))
+                    EPOCH_LEN = RESET_EPOCH
+                    # visualize_graph(tree)
             
 
         """
         How many demand src pair out of all of them havent been routed
         """
-        return all_success_payments, all_failed_payments
+        return all_success_payments, all_failed_payments, round_num
 
 

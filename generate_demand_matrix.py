@@ -1,6 +1,7 @@
 import numpy as np
 from utils import *
 import random as rand
+import time
 
 from generate_circulation import circ_demand, demand_dict_to_matrix
 
@@ -25,6 +26,11 @@ def generate_demand_matrix():
     elif DEMAND_TYPE == "circular":
         demand_dict = circ_demand(n, MEAN, STD_DEV)
         demand_mat = demand_dict_to_matrix(demand_dict, n)
+        cnt = np.count_nonzero(demand_mat)
+        print(cnt)
+        print(demand_mat)
+        # exit(0)
+        
 
     return demand_mat
 
