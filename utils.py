@@ -1,8 +1,11 @@
-""" Graph type """
-GRAPH_TYPE = 'erdos-renyi'
+""" Graph type
+erdos-renyi
+grid
+"""
+GRAPH_TYPE = 'grid'
 
 """ Graph Size """
-GRAPH_SIZE = 100 
+GRAPH_SIZE = 25 
 # When using a grid graph
 GRID_GRAPH_SIZE = 5
 
@@ -14,11 +17,11 @@ uniform
 """
 
 DEMAND_TYPE = 'circular'
-MEAN = 100
+MEAN = 25
 STD_DEV = 5
 
 """ Demand Type, valid for uniform or test demand """
-DEMAND_AMT = 100
+DEMAND_AMT = 10
 
 """ Credit matrix
 Types:
@@ -28,7 +31,7 @@ random
 CREDIT_TYPE = 'uniform'
 
 """ Credit Amount """
-CREDIT_AMT =  50
+CREDIT_AMT = 10
 
 """ Number of rounds """
 ROUNDS = GRAPH_SIZE*25
@@ -38,7 +41,7 @@ shortest
 random
 lsst
 """
-PATH_TYPE = "shortest"
+PATH_TYPE = "lsst"
 
 """ Number of paths(shortest) """
 NUM_PATHS_SHORT = 3
@@ -57,7 +60,4 @@ ERDOS_P_EDGE = 0.5
 ALPHA = 1.5
 
 """ RAND SEED """
-RAND_SEED = 12 # This is to create the credit for each node
-
-# impletemnt time to understand how long it takes
-# generate circualriotns, so that shortest path would fail in certain scenarios or the random path
+RAND_SEED = 12

@@ -28,8 +28,17 @@ def generate_graph():
         # visualize_graph(G)
         return G
     elif GRAPH_TYPE == "grid":
+        
         G = nx.grid_2d_graph(GRID_GRAPH_SIZE, GRID_GRAPH_SIZE)
+        for u, v in G.edges():
+            G[u][v]['weight'] = 2 * CREDIT_AMT
+            
+        G = nx.convert_node_labels_to_integers(G, label_attribute="old_label")
+
         return G
+    else:
+        print("Graph type is entered incorrect, check again!")
+        exit(0)
 
 # Function to visualize the graph 
 def visualize_graph(graph):

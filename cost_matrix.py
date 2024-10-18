@@ -1,4 +1,4 @@
-import numpy as np
+import numpy as np # type: ignore
 
 from utils import *
 
@@ -8,10 +8,6 @@ def generate_credit_matrix():
     if CREDIT_TYPE == 'uniform':
         credit_mat = np.ones([n, n]) * CREDIT_AMT
         np.fill_diagonal(credit_mat, 0.0)
-        print(credit_mat)
-        exit(0)
-        
-
     elif CREDIT_TYPE == 'random':
         np.random.seed(RAND_SEED)
         credit_mat = np.triu(np.random.rand(n, n), 1) * 2 * CREDIT_AMT

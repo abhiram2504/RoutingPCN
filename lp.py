@@ -29,40 +29,17 @@ def main():
     print(credit_mat)
 
     total_demand = sum(sum(demand_mat))
-
-
     num_rounds = ROUNDS
-    # print(f"The number of rounds are: {num_rounds}")
-    # Calculate the number of source-destination pairs
     num_pairs = calculate_src_dest_pairs(demand_mat)
+   
     print(f"Number of source-destination pairs: {num_pairs}")
 
-    # if num_rounds < num_pairs:
-    #     print("The demand matrix cannot be satisfied as there are less rounds than the total number of src dest pairs")
-    #     exit(0)
-
-    # Visualize the initial graph
-    # visualize_graph(G)
     path_type = PATH_TYPE
-
+    
     start_time = time.time()
     all_success_payments, all_failed_payments, round_num = rt.simulate_routing(demand_mat, credit_mat, G, path_type)
     end_time = time.time()
     
-
-    # Output final results
-    # print("Final successful payments:", all_success_payments)
-    # print("Final failed payments:", all_failed_payments)
-
-    # # num_failed_payments = len(all_failed_payments)
-    # if path_type != "lsst":
-    #     # print(f"Total failed demand: {rt.TOTAL_DEMAND_FAILED}")
-    #     # print(f"Throughput: {(total_demand - rt.TOTAL_DEMAND_FAILED)/total_demand}")
-    #     total_not_routed = sum(sum(demand_mat))
-    #     print(f"Total failed demand: {total_not_routed}")
-    #     print(f"Throughput: {(total_demand - total_not_routed)/total_demand}")
-    # else:
-
     # We check how much demand is remaining in the demand_mat
     # and then that would we the demand that is not going to to be routed ans the minum number of rounds
     # that we go for lsst if something is not achievale would be TOTAL_ROUNDS

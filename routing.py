@@ -12,8 +12,8 @@ TOTAL_DEMAND_FAILED = 0
 # Function to route a single payment for one round
 def route_single_payment(graph, demand_matrix, credit_matrix, source, target, path_type, tree = None):
     global TOTAL_DEMAND_FAILED
-    success_payments = []  # List to keep track of successful payments
-    failed_payments = []  # List to keep track of failed payments
+    success_payments = []  
+    failed_payments = []  
 
     routing_tree = tree
 
@@ -236,12 +236,7 @@ def simulate_routing(demand_matrix, credit_matrix, graph, path_type=PATH_TYPE):
                     intersection = spanning_tree_set.intersection(used_trees)
                     tree = random.choice(list(intersection))
                     EPOCH_LEN = RESET_EPOCH
-                    # visualize_graph(tree)
             
-
-        """
-        How many demand src pair out of all of them havent been routed
-        """
         return all_success_payments, all_failed_payments, round_num
 
 
