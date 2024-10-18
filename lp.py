@@ -75,16 +75,6 @@ def main():
     print(f"Throughput: {(total_demand - total_not_routed)/total_demand}")
     print(f"Total number of rounds used for routing: {round_num}")
     print(f"Percentage of failed rounds: {failed_rounds/num_rounds}")
-
-
-
-    """
-    For all but llst, I will return the demand failed, for llst I will
-    check in the end how much demand is left.
-    Hence there is not going to be any failed payment for lsst, either all
-    the demand has been routed or all the rounds have been exhausted. 
-    """
-    
     print(f"Total time to simulate the payments: {end_time-start_time}")
 
 if __name__ == '__main__':

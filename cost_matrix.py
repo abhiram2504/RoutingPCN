@@ -8,6 +8,9 @@ def generate_credit_matrix():
     if CREDIT_TYPE == 'uniform':
         credit_mat = np.ones([n, n]) * CREDIT_AMT
         np.fill_diagonal(credit_mat, 0.0)
+        print(credit_mat)
+        exit(0)
+        
 
     elif CREDIT_TYPE == 'random':
         np.random.seed(RAND_SEED)
@@ -16,3 +19,5 @@ def generate_credit_matrix():
         np.fill_diagonal(credit_mat, 0.0)
         
     return credit_mat
+
+

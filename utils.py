@@ -2,7 +2,7 @@
 GRAPH_TYPE = 'erdos-renyi'
 
 """ Graph Size """
-GRAPH_SIZE = 8
+GRAPH_SIZE = 100 
 # When using a grid graph
 GRID_GRAPH_SIZE = 5
 
@@ -12,9 +12,10 @@ circular
 test
 uniform
 """
-DEMAND_TYPE = 'uniform'
-MEAN = 10
-STD_DEV = 1
+
+DEMAND_TYPE = 'circular'
+MEAN = 100
+STD_DEV = 5
 
 """ Demand Type, valid for uniform or test demand """
 DEMAND_AMT = 100
@@ -30,7 +31,7 @@ CREDIT_TYPE = 'uniform'
 CREDIT_AMT =  50
 
 """ Number of rounds """
-ROUNDS = GRAPH_SIZE*1
+ROUNDS = GRAPH_SIZE*25
 
 """ Path type
 shortest
@@ -43,13 +44,14 @@ PATH_TYPE = "shortest"
 NUM_PATHS_SHORT = 3
 
 """ Epoch Len """
-EPOCH_LEN = GRAPH_SIZE
+
+EPOCH_LEN = GRAPH_SIZE*2
 RESET_EPOCH = EPOCH_LEN
 
 """ Number of paths(random) """
 
 """ The parameter for erdos renyi """
-ERDOS_P_EDGE = 0.3
+ERDOS_P_EDGE = 0.5
 
 """ To increase the weight on the edges (Creating Spanning trees)"""
 ALPHA = 1.5

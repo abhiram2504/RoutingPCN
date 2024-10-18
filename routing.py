@@ -42,7 +42,7 @@ def route_single_payment(graph, demand_matrix, credit_matrix, source, target, pa
             # visualize_graph(tree)
             if nx.has_path(tree, source, target):
                 # Get the shortest path
-                path = nx.shortest_path(graph, source=source, target=target)
+                path = nx.shortest_path(tree, source=source, target=target)
                 return path
             else:
                 print(f"There spans no path from {source} to {target}")

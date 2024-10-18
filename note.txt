@@ -32,3 +32,12 @@ create cycles of random (random length)
 9/23
 Introduce an epoch, within each epoch choose a random tree index. and route all payemtns for the demand matrix
 (n^2 - n, basically the size of the demand matrix)
+
+"""
+this has nothign to 
+"""
+
+
+G 
+
+1 2 3 4 
