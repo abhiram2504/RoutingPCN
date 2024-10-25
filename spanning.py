@@ -115,16 +115,14 @@ if __name__ == "__main__":
     for u, v in G.edges():
         G[u][v]['weight'] = 2 * CREDIT_AMT
         
-    visualize_graph(G)
+    
+    spanning_trees = generate_and_validate_spanning_trees(G)
+    
+    for tree in spanning_trees:
+        visualize_graph(tree)
     
     # Generate graph
     # Calculate stretch of spanning trees
-    calculate_strech_of_spanning_tree(G)
-        
-    print("Average stretch:", np.mean(DIST_LIST))
-    print("Max stretch:", np.max(DIST_LIST))
-    print("Min stretch:", np.min(DIST_LIST))
-    print("Median stretch:", np.median(DIST_LIST))
-    print("Standard deviation of stretch:", np.std(DIST_LIST))
-    print("Number of unique node pairs:", len(NODE_PAIRS))
+    # calculate_strech_of_spanning_tree(G)
+    
 

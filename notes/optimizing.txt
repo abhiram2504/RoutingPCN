@@ -1,0 +1,5 @@
+I should be able to have a spanning tree for each node, and then to be able to route I should choose between having an epocn tree ro a ndoe i tree.
+I should also track the failed payments (make a mtrix i->j and increament teh counter if the payment failed) HAve everything set as 0 and use 
+ 
+
+Pick the k heaviest use teh ephc tree fro those adn then use teh shosrtest path tree for the other ones.

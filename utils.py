@@ -5,7 +5,7 @@ grid
 GRAPH_TYPE = 'erdos-renyi'
 
 """ Graph Size """
-GRAPH_SIZE = 10
+GRAPH_SIZE = 100
 # When using a grid graph
 GRID_GRAPH_SIZE = 5
 
