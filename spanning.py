@@ -1,13 +1,13 @@
-import networkx as nx
-import matplotlib.pyplot as plt
+import networkx as nx # type: ignore
+import matplotlib.pyplot as plt # type: ignore
 import random as rand
-import numpy as np
-import pandas as pd
+import numpy as np # type: ignore
+import pandas as pd # type: ignore
 
 from utils import * 
 from graph import visualize_graph
+from collections import Counter
 
-# MIN_ALPHA = 0.5  # Minimum value of ALPHA to stop reducing it
 DIST_LIST = []
 NODE_PAIRS = []
 
@@ -73,6 +73,9 @@ def spanning_tree_list_compute(graph):
     
     # for tree in spanning_tree_list:
     #     visualize_graph(tree)
+    #     calculate_strech_of_spanning_tree(tree)
+        
+
     
     return all_spanning_tree_edges, spanning_tree_list
 
@@ -104,5 +107,24 @@ def generate_and_validate_spanning_trees(graph):
             ALPHA = round(ALPHA + 0.1, 2)
             spanning_tree_list_compute(graph)
         
-
+if __name__ == "__main__":
+    G = nx.erdos_renyi_graph(GRAPH_SIZE, ERDOS_P_EDGE, RAND_SEED)
+    if not nx.is_connected(G):
+        print("Graph is not connected.")
+        exit(0)
+    for u, v in G.edges():
+        G[u][v]['weight'] = 2 * CREDIT_AMT
+        
+    visualize_graph(G)
+    
+    # Generate graph
+    # Calculate stretch of spanning trees
+    calculate_strech_of_spanning_tree(G)
+        
+    print("Average stretch:", np.mean(DIST_LIST))
+    print("Max stretch:", np.max(DIST_LIST))
+    print("Min stretch:", np.min(DIST_LIST))
+    print("Median stretch:", np.median(DIST_LIST))
+    print("Standard deviation of stretch:", np.std(DIST_LIST))
+    print("Number of unique node pairs:", len(NODE_PAIRS))
 

@@ -1,5 +1,5 @@
-import networkx as nx
-import numpy as np
+import networkx as nx # type: ignore
+import numpy as np # type: ignore
 import random, time
 from collections import Counter
 from utils import *

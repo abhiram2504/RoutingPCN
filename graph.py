@@ -1,6 +1,6 @@
-import matplotlib.pyplot as plt
-import numpy as np
-import networkx as nx
+import matplotlib.pyplot as plt # type: ignore
+import numpy as np # type: ignore
+import networkx as nx # type: ignore
 
 import generate_demand_matrix as gdm
 import cost_matrix as cm

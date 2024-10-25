@@ -20,9 +20,9 @@ def circ_demand(num_nodes, mean, std_dev):
 		perm = np.random.permutation(num_nodes)
 		for j, k in enumerate(perm):
 			if (j, k) in demand_dict.keys():
-				demand_dict[j, k] += 1
+				demand_dict[j, k] += MEAN_AMT
 			else:
-				demand_dict[j, k] = 1
+				demand_dict[j, k] = MEAN_AMT
 
 	""" add 'std_dev' number of additional cycles to the demand """
 	for i in range(std_dev):
@@ -33,15 +33,17 @@ def circ_demand(num_nodes, mean, std_dev):
 		cycle.append(cycle[0])
 		for j in range(len(cycle[:-1])):
 			if (cycle[j], cycle[j+1]) in demand_dict.keys():
-				demand_dict[cycle[j], cycle[j+1]] += 1
+				demand_dict[cycle[j], cycle[j+1]] += STD_DEV_AMT
 			else:
-				demand_dict[cycle[j], cycle[j+1]] = 1			
+				demand_dict[cycle[j], cycle[j+1]] = STD_DEV_AMT		
 
 	""" remove diagonal entries of demand matrix """
 	for (i, j) in demand_dict.keys():
 		if i == j:
 			# print(f"i:{i}, j:{j}, demand:{demand_dict[i, j]}") 
 			demand_dict[i, j] = 0
+
+
 
 
 	return demand_dict

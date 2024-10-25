@@ -29,7 +29,7 @@ def generate_demand_matrix():
         cnt = np.count_nonzero(demand_mat)
         print(cnt)
         print(demand_mat)
-        # exit(0)
+
         
 
     return demand_mat
