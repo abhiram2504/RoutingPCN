@@ -176,23 +176,22 @@ def simulate_routing(demand_matrix, credit_matrix, graph, path_type=PATH_TYPE):
         spanning_trees = generate_and_validate_spanning_trees(graph)
         # Continue looping until the demand matrix is zero or until a set number of rounds are executed
         while round_num < ROUNDS and not np.all(demand_matrix == 0):
-            demand_pairs = [(i, j) for i in range(len(demand_matrix)) for j in range(len(demand_matrix)) if i != j and demand_matrix[i][j] > 0]
+            demand_pairs = [(i, j, demand_matrix[i,j]) for i in range(len(demand_matrix)) for j in range(len(demand_matrix)) if i != j and demand_matrix[i][j] > 0]
            
-            
             # choosing a random tree and adding it to the set
-            tree = random.choice(spanning_trees)
-            used_trees.add(tree)
+            epoch_tree = random.choice(spanning_trees)
+            used_trees.add(epoch_tree)
 
             if len(used_trees) == len(spanning_trees):
                 used_trees.clear()
-                tree = random.choice(spanning_trees)
-                used_trees.add(tree)
+                epoch_tree = random.choice(spanning_trees)
+                used_trees.add(epoch_tree)
                 
 
             if EPOCH_LEN<0:
                 spanning_tree_set = set(spanning_trees)
                 intersection = spanning_tree_set.intersection(used_trees)
-                tree = random.choice(list(intersection))
+                epoch_tree = random.choice(list(intersection))
                 EPOCH_LEN = RESET_EPOCH
                 
             # Check if there are any demand pairs to route
@@ -202,40 +201,63 @@ def simulate_routing(demand_matrix, credit_matrix, graph, path_type=PATH_TYPE):
 
             print(f"Round:{round_num}, Total rounds: {ROUNDS}")
             print(len(demand_pairs))
+            
+        
+            demand_pairs_by_source = {}
+            for i, j, demand in demand_pairs:
+                if i not in demand_pairs_by_source:
+                    demand_pairs_by_source[i] = []
+                demand_pairs_by_source[i].append((j, demand))
+            
+            
             # Iterate over all valid src-dest pairs
-            for source, target in demand_pairs:
+            for source, targets in demand_pairs_by_source.items():
                 # Route a single payment for this src-dest pair
-                success_payments, failed_payments = route_single_payment(
-                    graph, demand_matrix, credit_matrix, source, target, path_type, tree=tree
-                )
-                                
-                round_num += 1  # Count only valid routing attempts
-                EPOCH_LEN -= 1
-                all_success_payments.extend(success_payments)
-                all_failed_payments.extend(failed_payments)
+                targets.sort(key=lambda x: x[1], reverse=True)
+                
+                
+                # Route the top `k` demands via `spanning_trees[source]`, others via the epoch tree
+                for idx, (target, demand) in enumerate(targets):
+                    # Use the source's spanning tree for the top `k` demands, else use the epoch tree
+                    tree = spanning_trees[source] if idx < K else epoch_tree
 
-                # Print the results for this round
-                print(f"Round {round_num}:")
-                print(f"Attempting to route from {source} to {target}")
-                print("Successful payments:", success_payments)
-                print("Failed payments:", failed_payments)
-                print("Updated demand matrix:")
-                print(demand_matrix)
-                print("Updated credit matrix:")
-                print(credit_matrix)
+                
+                    success_payments, failed_payments = route_single_payment(
+                        graph, demand_matrix, credit_matrix, source, target, path_type, tree=tree
+                    )
+                                    
+                    round_num += 1  # Count only valid routing attempts
+                    EPOCH_LEN -= 1
+                    all_success_payments.extend(success_payments)
+                    all_failed_payments.extend(failed_payments)
 
-                # Check if all demands have been fulfilled after each attempt
+                    # Print the results for this round
+                    print(f"Round {round_num}:")
+                    print(f"Attempting to route from {source} to {target}")
+                    print("Successful payments:", success_payments)
+                    print("Failed payments:", failed_payments)
+                    print("Updated demand matrix:")
+                    print(demand_matrix)
+                    print("Updated credit matrix:")
+                    print(credit_matrix)
+
+                    # Check if all demands have been fulfilled after each attempt
+                    if np.all(demand_matrix == 0):
+                        # print(f"All demands fulfilled by round {round_num}")
+                        break  # Exit the loop if all demands are fulfilled
+
+                    if round_num >= ROUNDS: break
+                    
+                    if EPOCH_LEN<0:
+                        spanning_tree_set = set(spanning_trees)
+                        intersection = spanning_tree_set.intersection(used_trees)
+                        tree = random.choice(list(intersection))
+                        EPOCH_LEN = RESET_EPOCH
+                        
                 if np.all(demand_matrix == 0):
-                    # print(f"All demands fulfilled by round {round_num}")
-                    break  # Exit the loop if all demands are fulfilled
+                    break 
 
                 if round_num >= ROUNDS: break
-                
-                if EPOCH_LEN<0:
-                    spanning_tree_set = set(spanning_trees)
-                    intersection = spanning_tree_set.intersection(used_trees)
-                    tree = random.choice(list(intersection))
-                    EPOCH_LEN = RESET_EPOCH
             
         return all_success_payments, all_failed_payments, round_num
 

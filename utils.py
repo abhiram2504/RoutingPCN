@@ -61,7 +61,13 @@ RESET_EPOCH = EPOCH_LEN
 ERDOS_P_EDGE = 0.2
 
 """ To increase the weight on the edges (Creating Spanning trees)"""
-ALPHA = 1.5
+ALPHA = 1.3
 
 """ RAND SEED """
 RAND_SEED = 12
+
+
+"""
+This is the parameter for routing the first K paths in the network in lsst path type
+"""
+K = 2

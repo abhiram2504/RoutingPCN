@@ -8,38 +8,28 @@ from utils import *
 from graph import visualize_graph
 from collections import Counter
 
-DIST_LIST = []
 NODE_PAIRS = []
 
 
 def generate_min_spanning_tree(graph):
-    global DIST_LIST
 
     """Generate a maximum spanning tree using Prim's algorithm (edges with lower weights are prioritized)."""
     max_spanning_tree = nx.minimum_spanning_tree(graph, weight='weight')
     
     return max_spanning_tree
 
-def calculate_strech_of_spanning_tree(max_spanning_tree):
-    paths = dict(nx.all_pairs_shortest_path(max_spanning_tree))
-    length_dict = {}
-    # Calculate lengths
-    for i in range(max_spanning_tree.number_of_nodes()):
-        for j in range(max_spanning_tree.number_of_nodes()):
+def calulate_matrix_distance(tree):
+    n = tree.number_of_nodes()
+    distance_matrix = np.zeros((n, n), dtype=int)
+    
+    paths_lengths = dict(nx.all_pairs_shortest_path_length(tree))
+    
+    for i in range(n):
+        for j in range(n):
             if i != j:
-                key = f"{i}->{j}"
-                if key not in NODE_PAIRS:
-                    NODE_PAIRS.append(key)
-                path_len = len(paths[i][j])-1
-                if key in length_dict:
-                    length_dict[key].append(path_len)                    
-                else:
-                    length_dict[f"{i}->{j}"] = len(paths[i][j])-1
+                distance_matrix[i][j] = paths_lengths[i][j]
                 
-                # Append path length to DIST_LIST
-                DIST_LIST.append(len(paths[i][j])-1)
-                
-    print(length_dict)
+    return distance_matrix
 
 def increase_edge_weights(graph, edges_used):
     """Increase the weights of edges used in a spanning tree."""
@@ -57,7 +47,7 @@ def spanning_tree_list_compute(graph):
     all_spanning_tree_edges = set()
     original_edges = set(graph.edges())
     spanning_tree_list = []
-    for i in range(len(graph.nodes())-1):
+    for i in range(len(graph.nodes())):
         T = generate_min_spanning_tree(graph)
         spanning_tree_list.append(T)
         tree_edges = set(T.edges())
@@ -65,9 +55,9 @@ def spanning_tree_list_compute(graph):
 
         increase_edge_weights(graph, tree_edges)
 
-        if all_spanning_tree_edges == original_edges:
-            print(spanning_tree_list)
-            break
+        # if all_spanning_tree_edges == original_edges:
+        #     print(spanning_tree_list)
+        #     break
     
     
     
@@ -75,8 +65,6 @@ def spanning_tree_list_compute(graph):
     #     visualize_graph(tree)
     #     calculate_strech_of_spanning_tree(tree)
         
-
-    
     return all_spanning_tree_edges, spanning_tree_list
 
 
@@ -106,6 +94,22 @@ def generate_and_validate_spanning_trees(graph):
             reset_edge_weights(graph, original_weights)
             ALPHA = round(ALPHA + 0.1, 2)
             spanning_tree_list_compute(graph)
+
+def calculate_normalized_distance_matrix(G):
+    spanning_trees = generate_and_validate_spanning_trees(G)
+    
+    graph_distance_matrix = calulate_matrix_distance(G)
+    
+    sp_distance_matrixs = []
+    for tree in spanning_trees:
+        sp_distance_matrixs.append(calulate_matrix_distance(tree))
+        
+    mean_sp_distance_matrix = np.mean(sp_distance_matrixs, axis=0)
+    
+    epsilon = 1e-10  
+    result_matrix = np.divide(mean_sp_distance_matrix, graph_distance_matrix + epsilon)
+    
+    return result_matrix
         
 if __name__ == "__main__":
     G = nx.erdos_renyi_graph(GRAPH_SIZE, ERDOS_P_EDGE, RAND_SEED)
@@ -115,11 +119,14 @@ if __name__ == "__main__":
     for u, v in G.edges():
         G[u][v]['weight'] = 2 * CREDIT_AMT
         
-    
+        
     spanning_trees = generate_and_validate_spanning_trees(G)
+
+
+    # result_matrix = calculate_normalized_distance_matrix(G)
+    # print(result_matrix)
     
-    for tree in spanning_trees:
-        visualize_graph(tree)
+    
     
     # Generate graph
     # Calculate stretch of spanning trees
