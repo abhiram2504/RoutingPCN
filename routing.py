@@ -68,13 +68,13 @@ def route_single_payment(graph, demand_matrix, credit_matrix, source, target, pa
             if min_credit >= demand:
                 # Successful payment scenario
                 for u, v in zip(path[:-1], path[1:]):
-                    # credit_matrix[u][v] -= demand
-                    # credit_matrix[v][u] += demand
-                    credit_matrix[u][v] -= 1
-                    credit_matrix[v][u] += 1
-                success_payments.append((source, target, 1))
-                demand_matrix[source, target] -= 1  # Update the demand matrix
-                # demand_matrix[source, target] -= demand
+                    credit_matrix[u][v] -= demand
+                    credit_matrix[v][u] += demand
+                    # credit_matrix[u][v] -= 1
+                    # credit_matrix[v][u] += 1
+                success_payments.append((source, target, demand))
+                # demand_matrix[source, target] -= 1  # Update the demand matrix
+                demand_matrix[source, target] -= demand
             elif min_credit == 0:
                 # print(f"Payment failed: {source} -> {target}")
                 # exit(0)
@@ -82,13 +82,13 @@ def route_single_payment(graph, demand_matrix, credit_matrix, source, target, pa
                 return success_payments, failed_payments
             else:
                 for u, v in zip(path[:-1], path[1:]):
-                    # credit_matrix[u][v] -= min_credit
-                    # credit_matrix[v][u] += min_credit
-                    credit_matrix[u][v] -= 1
-                    credit_matrix[v][u] += 1
-                # demand_matrix[source, target] -= min_credit
-                demand_matrix[source, target] -= 1
-                success_payments.append((source, target, 1))
+                    credit_matrix[u][v] -= min_credit
+                    credit_matrix[v][u] += min_credit
+                    # credit_matrix[u][v] -= 1
+                    # credit_matrix[v][u] += 1
+                demand_matrix[source, target] -= min_credit
+                # demand_matrix[source, target] -= 1
+                success_payments.append((source, target, min_credit))
         # If not using LSST
         else:
             path = select_path(graph, source, target, path_type)
@@ -105,13 +105,13 @@ def route_single_payment(graph, demand_matrix, credit_matrix, source, target, pa
 
                 if min_credit >= demand:
                     for u, v in zip(path[:-1], path[1:]):
-                        # credit_matrix[u][v] -= demand
-                        # credit_matrix[v][u] += demand
-                        credit_matrix[u][v] -= 1
-                        credit_matrix[v][u] += 1
-                    success_payments.append((source, target, 1))
-                    # demand_matrix[source, target] -= demand
-                    demand_matrix[source, target] -= 1  # Update the demand matrix
+                        credit_matrix[u][v] -= demand
+                        credit_matrix[v][u] += demand
+                        # credit_matrix[u][v] -= 1
+                        # credit_matrix[v][u] += 1
+                    success_payments.append((source, target, demand))
+                    demand_matrix[source, target] -= demand
+                    # demand_matrix[source, target] -= 1  # Update the demand matrix
                 elif min_credit == 0:
                     failed_payments.append((source, target, demand_matrix[source, target]))
                     TOTAL_DEMAND_FAILED += demand_matrix[source, target]    
@@ -119,13 +119,13 @@ def route_single_payment(graph, demand_matrix, credit_matrix, source, target, pa
                     return success_payments, failed_payments
                 else:
                     for u, v in zip(path[:-1], path[1:]):
-                        # credit_matrix[u][v] -= min_credit
-                        # credit_matrix[v][u] += min_credit
-                        credit_matrix[u][v] -= 1
-                        credit_matrix[v][u] += 1
-                    # demand_matrix[source, target] -= min_credit
-                    demand_matrix[source, target] -= 1
-                    success_payments.append((source, target, 1))
+                        credit_matrix[u][v] -= min_credit
+                        credit_matrix[v][u] += min_credit
+                        # credit_matrix[u][v] -= 1
+                        # credit_matrix[v][u] += 1
+                    demand_matrix[source, target] -= min_credit
+                    # demand_matrix[source, target] -= 1
+                    success_payments.append((source, target, min_credit))
 
     return success_payments, failed_payments
 
