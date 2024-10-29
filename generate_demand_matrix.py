@@ -4,6 +4,7 @@ import random as rand
 import time
 
 from generate_circulation import circ_demand, demand_dict_to_matrix
+from generate_circ_2 import circ_demand_no_2_cycles
 
 def generate_demand_matrix():
 
@@ -16,7 +17,6 @@ def generate_demand_matrix():
         demand_mat[2,3] = 6.
         demand_mat[3,1] = 7.
         np.fill_diagonal(demand_mat, 0.0)
-
     elif DEMAND_TYPE == "uniform":
         demand_mat = np.ones([n, n])    
         for i in range(len(demand_mat)):
@@ -27,10 +27,10 @@ def generate_demand_matrix():
         demand_dict = circ_demand(n, MEAN, STD_DEV)
         demand_mat = demand_dict_to_matrix(demand_dict, n)
         cnt = np.count_nonzero(demand_mat)
-        print(cnt)
-        print(demand_mat)
-
-        
-
+    elif DEMAND_TYPE == "circular_no_2_cycles":
+        demand_dict = circ_demand_no_2_cycles(n, MEAN, STD_DEV)
+        demand_mat = demand_dict_to_matrix(demand_dict, n)
+        cnt = np.count_nonzero(demand_mat)
+        print("Demand density: ", 100*cnt/(n*n), "%")
     return demand_mat
 

@@ -26,7 +26,8 @@ def circ_demand(num_nodes, mean, std_dev):
 
 	""" add 'std_dev' number of additional cycles to the demand """
 	for i in range(std_dev):
-		cycle_len = np.random.choice(range(1, num_nodes+1))
+		# cycle_len = np.random.choice(range(1, num_nodes+1))
+		cycle_len = 3
 		cycle = np.random.choice(num_nodes, cycle_len)
 		cycle = set(cycle)
 		cycle = list(cycle)
@@ -42,10 +43,6 @@ def circ_demand(num_nodes, mean, std_dev):
 		if i == j:
 			# print(f"i:{i}, j:{j}, demand:{demand_dict[i, j]}") 
 			demand_dict[i, j] = 0
-
-
-
-
 	return demand_dict
 
 def demand_dict_to_matrix(demand_dict, num_nodes):
@@ -56,6 +53,7 @@ def demand_dict_to_matrix(demand_dict, num_nodes):
         demand_matrix[i][j] = value
 
     return demand_matrix
+
 
 if __name__=='__main__':
 	np.random.seed(11)

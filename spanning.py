@@ -29,6 +29,8 @@ def calulate_matrix_distance(tree):
             if i != j:
                 distance_matrix[i][j] = paths_lengths[i][j]
                 
+    # print(distance_matrix)
+    
     return distance_matrix
 
 def increase_edge_weights(graph, edges_used):
@@ -104,11 +106,18 @@ def calculate_normalized_distance_matrix(G):
     for tree in spanning_trees:
         sp_distance_matrixs.append(calulate_matrix_distance(tree))
         
+    
     mean_sp_distance_matrix = np.mean(sp_distance_matrixs, axis=0)
+    
+    # print(mean_sp_distance_matrix)
+    # exit(0)
     
     epsilon = 1e-10  
     result_matrix = np.divide(mean_sp_distance_matrix, graph_distance_matrix + epsilon)
     
+    avg_dist = np.mean(result_matrix)
+    print(avg_dist)
+    exit(0)
     return result_matrix
         
 if __name__ == "__main__":
@@ -119,12 +128,13 @@ if __name__ == "__main__":
     for u, v in G.edges():
         G[u][v]['weight'] = 2 * CREDIT_AMT
         
+    # visualize_graph(G)
         
     spanning_trees = generate_and_validate_spanning_trees(G)
 
 
-    # result_matrix = calculate_normalized_distance_matrix(G)
-    # print(result_matrix)
+    result_matrix = calculate_normalized_distance_matrix(G)
+    print(result_matrix)
     
     
     

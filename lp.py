@@ -25,6 +25,8 @@ def main():
     G = generate_graph()
     demand_mat = gdm.generate_demand_matrix()
     credit_mat = cm.generate_credit_matrix()
+    demand_den = np.sum(demand_mat>0)
+    
     print(demand_mat)
     print(credit_mat)
 
@@ -46,6 +48,8 @@ def main():
     total_not_routed = sum(sum(demand_mat))
     failed_rounds = len(all_failed_payments)
     
+    # demand_density = sum(np.nonzero(demand_mat))
+    
     print(f"Total demand: {total_demand}")
     print(f"Total failed demand: {total_not_routed}")
     print(f"Total successful demand: {total_demand - total_not_routed}")
@@ -53,6 +57,10 @@ def main():
     print(f"Total number of rounds used for routing: {round_num}")
     print(f"Percentage of failed rounds: {failed_rounds/num_rounds}")
     print(f"Total time to simulate the payments: {end_time-start_time}")
+    print(f"Demand Density: {demand_den}")
+    # print(f"Demand Density: {demand_density}")
+    
+    
 
 if __name__ == '__main__':
     main()

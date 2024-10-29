@@ -41,3 +41,16 @@ this has nothign to
 G 
 
 1 2 3 4 
+
+
+
+i -> j -> k 
+
+i -> k: 10
+
+min(7) 
+
+max amt bieng sent if 1
+
+
+line 95 and 53

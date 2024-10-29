@@ -14,6 +14,7 @@ Types of demand:
 circular
 test
 uniform
+circular_no_2_cycles
 
 scale the mean 
 scale the std_dev
@@ -21,9 +22,9 @@ scale the std_dev
 
 DEMAND_TYPE = 'circular'
 MEAN = 0
-STD_DEV = 5
-MEAN_AMT = 1 
-STD_DEV_AMT = 100
+STD_DEV = 1000
+MEAN_AMT = 0 
+STD_DEV_AMT = 10
 
 """ Demand Type, valid for uniform or test demand """
 DEMAND_AMT = 10
@@ -36,10 +37,10 @@ random
 CREDIT_TYPE = 'uniform'
 
 """ Credit Amount """
-CREDIT_AMT = 2 
+CREDIT_AMT = 15
 
 """ Number of rounds """
-ROUNDS = GRAPH_SIZE*50
+ROUNDS = GRAPH_SIZE*25
 
 """ Path type
 shortest
@@ -52,10 +53,11 @@ PATH_TYPE = "lsst"
 NUM_PATHS_SHORT = 3
 
 """ Epoch Len """
-EPOCH_LEN = GRAPH_SIZE 
+EPOCH_LEN = GRAPH_SIZE
 RESET_EPOCH = EPOCH_LEN
 
 """ Number of paths(random) """
+NUM_PATHS_SHORT = 3
 
 """ The parameter for erdos renyi """
 ERDOS_P_EDGE = 0.2
@@ -66,8 +68,7 @@ ALPHA = 1.3
 """ RAND SEED """
 RAND_SEED = 12
 
-
 """
 This is the parameter for routing the first K paths in the network in lsst path type
 """
-K = 2
+K = 0  

@@ -1,0 +1,22 @@
+
+
+2 node circulaiton -> balanced if using the same paths (Shortest path) 
+
+uniform
+circulation: 
+
+
+In uniform demand, the cirulariotn len would be aroud 2 
+
+
+i i+1 i+2 i+3 
+
+k = 2
+
+spanningTree[i] 
+
+i+3
+epochTree 
+
+
+i -> i+1 -> i+2 -> i 
