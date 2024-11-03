@@ -12,24 +12,18 @@ NODE_PAIRS = []
 
 
 def generate_min_spanning_tree(graph):
-
-    """Generate a maximum spanning tree using Prim's algorithm (edges with lower weights are prioritized)."""
-    max_spanning_tree = nx.minimum_spanning_tree(graph, weight='weight')
-    
-    return max_spanning_tree
+    mix_spanning_tree = nx.minimum_spanning_tree(graph, weight='weight')
+    return mix_spanning_tree
 
 def calulate_matrix_distance(tree):
     n = tree.number_of_nodes()
     distance_matrix = np.zeros((n, n), dtype=int)
-    
     paths_lengths = dict(nx.all_pairs_shortest_path_length(tree))
     
     for i in range(n):
         for j in range(n):
             if i != j:
                 distance_matrix[i][j] = paths_lengths[i][j]
-                
-    # print(distance_matrix)
     
     return distance_matrix
 
@@ -57,36 +51,20 @@ def spanning_tree_list_compute(graph):
 
         increase_edge_weights(graph, tree_edges)
 
-        # if all_spanning_tree_edges == original_edges:
-        #     print(spanning_tree_list)
-        #     break
-    
-    
-    
-    # for tree in spanning_tree_list:
-    #     visualize_graph(tree)
-    #     calculate_strech_of_spanning_tree(tree)
-        
     return all_spanning_tree_edges, spanning_tree_list
-
-
 
 def generate_and_validate_spanning_trees(graph):
     global ALPHA
     original_weights = {(u, v): data['weight'] for u, v, data in graph.edges(data=True)}  # Store original edge weights
     
-    # List to store all spanning tree objects
     spanning_tree_list = []
 
     while True:
-        # Generate spanning trees and collect their edges
         all_spanning_tree_edges, spanning_tree_list = spanning_tree_list_compute(graph)
         original_edges = set(graph.edges())
         
-        # Calculate missing edges
         missing_edges = original_edges - all_spanning_tree_edges
         
-        # Check if all original edges are covered
         if not missing_edges:
             print("Validation successful: All edges of the original graph are covered.")
             return spanning_tree_list  # Return the set of all spanning tree objects
@@ -109,15 +87,9 @@ def calculate_normalized_distance_matrix(G):
     
     mean_sp_distance_matrix = np.mean(sp_distance_matrixs, axis=0)
     
-    # print(mean_sp_distance_matrix)
-    # exit(0)
-    
     epsilon = 1e-10  
     result_matrix = np.divide(mean_sp_distance_matrix, graph_distance_matrix + epsilon)
     
-    avg_dist = np.mean(result_matrix)
-    print(avg_dist)
-    exit(0)
     return result_matrix
         
 if __name__ == "__main__":
@@ -127,19 +99,9 @@ if __name__ == "__main__":
         exit(0)
     for u, v in G.edges():
         G[u][v]['weight'] = 2 * CREDIT_AMT
-        
-    # visualize_graph(G)
-        
+
     spanning_trees = generate_and_validate_spanning_trees(G)
-
-
     result_matrix = calculate_normalized_distance_matrix(G)
     print(result_matrix)
-    
-    
-    
-    # Generate graph
-    # Calculate stretch of spanning trees
-    # calculate_strech_of_spanning_tree(G)
     
 

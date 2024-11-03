@@ -20,11 +20,11 @@ scale the mean
 scale the std_dev
 """
 
-DEMAND_TYPE = 'circular_no_2_cycles'
+DEMAND_TYPE = 'circular'
 MEAN = 100
-STD_DEV = 10
-MEAN_AMT = 10
-STD_DEV_AMT = 10
+STD_DEV = 1
+MEAN_AMT = 1
+STD_DEV_AMT = 1
 
 """ Demand Type, valid for uniform or test demand """
 DEMAND_AMT = 100
