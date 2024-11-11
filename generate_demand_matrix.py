@@ -29,10 +29,5 @@ def generate_demand_matrix():
         cnt = np.count_nonzero(demand_mat)
     elif DEMAND_TYPE == "circular_no_2_cycles":
         demand_mat = circ_demand_no_2_cycles(n, MEAN, STD_DEV)
-        # print(demand_mat)
-        # time.sleep(5)
-        # demand_mat = demand_dict_to_matrix(demand_dict, n)
-        # cnt = np.count_nonzero(demand_mat)
-        # print("Demand density: ", 100*cnt/(n*n), "%")
     return demand_mat
 

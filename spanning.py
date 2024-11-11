@@ -15,6 +15,9 @@ def generate_min_spanning_tree(graph):
     mix_spanning_tree = nx.minimum_spanning_tree(graph, weight='weight')
     return mix_spanning_tree
 
+
+
+
 def calulate_matrix_distance(tree):
     n = tree.number_of_nodes()
     distance_matrix = np.zeros((n, n), dtype=int)

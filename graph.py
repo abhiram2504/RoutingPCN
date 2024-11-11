@@ -4,10 +4,14 @@ import networkx as nx # type: ignore
 
 import generate_demand_matrix as gdm
 import cost_matrix as cm
+import random
+
 
 from utils import *
 
 def generate_graph():
+    random.seed(RAND_SEED)  
+    np.random.seed(RAND_SEED)
     if GRAPH_TYPE == "test":
         graph = nx.Graph()
         credit_mat = cm.generate_credit_matrix()

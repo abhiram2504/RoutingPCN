@@ -19,7 +19,6 @@ def route_single_payment(graph, demand_matrix, credit_matrix, source, target, pa
 
     # Function to select paths based on the path type
     def select_path(graph, source, target, path_type, tree = routing_tree):
-        global EPOCH_LEN
         if path_type == "shortest":
             # Check if path exists
             if nx.has_path(graph, source, target):

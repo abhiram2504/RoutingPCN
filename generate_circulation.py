@@ -14,7 +14,8 @@ def circ_demand(num_nodes, mean, std_dev):
 
 	demand_dict = {}
 
-	""" sum of 'mean' number of random permutation matrices """
+	""" sum of 'mean' number of random permutation
+ matrices """
 	""" note any permutation matrix is a circulation demand """
 	for i in range(mean):
 		perm = np.random.permutation(num_nodes)

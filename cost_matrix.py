@@ -13,7 +13,6 @@ def generate_credit_matrix():
         credit_mat = np.triu(np.random.rand(n, n), 1) * 2 * CREDIT_AMT
         credit_mat += credit_mat.transpose()
         np.fill_diagonal(credit_mat, 0.0)
-        
     return credit_mat
 
 
