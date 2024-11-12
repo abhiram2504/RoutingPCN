@@ -46,9 +46,17 @@ def circ_demand_no_2_cycles(num_nodes, mean, std_dev):
 		if demand_mat[j, i] > 0:
 			x = min(demand_mat[i, j], demand_mat[j, i])
 			demand_mat[i, j] -= x 
-			demand_mat[j, i] -= x 
+			demand_mat[j, i] -= x
+   
+	scaled_demand_mat = scale_demand_matrix(demand_mat, TARGET_SUM)
+	return scaled_demand_mat
 
-	return demand_mat
+
+def scale_demand_matrix(demand_matrix, target_sum):
+    current_sum = np.sum(demand_matrix)
+    scaling_factor = target_sum / current_sum
+    scaled_matrix = np.round(demand_matrix * scaling_factor).astype(int)
+    return scaled_matrix
 
 def main(): 
 	np.random.seed(11)

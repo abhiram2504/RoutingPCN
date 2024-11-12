@@ -54,3 +54,20 @@ max amt bieng sent if 1
 
 
 line 95 and 53
+
+_______________________________________
+
+Scaling the demand matrix: [this was a comment in generate_circulation.py]
+"""
+    10K, 50
+    
+    500K 
+    
+    250K [sum total of all the demands], howevre the demand density should remain the same. 
+    
+	compute the sum of the entries of the demand matrix and thel like scale them such that the sum of the entries is close to a target vraiable. [50*num_rounds]
+ 
+    max I can send is credit_amt * number of rounds, so a potential target can be half of this value.
+    
+    scale the demand by a non zero integer. 
+"""

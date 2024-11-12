@@ -52,14 +52,16 @@ def demand_dict_to_matrix(demand_dict, num_nodes):
     # Iterate through demand_dict and populate the matrix
     for (i, j), value in demand_dict.items():
         demand_matrix[i][j] = value
+        
+    scaled_mat = scale_demand_matrix(demand_matrix, TARGET_SUM)
 
-    return demand_matrix
+    return scaled_mat
+
+def scale_demand_matrix(demand_matrix, target_sum):
+	sum_demand = np.sum(demand_matrix)
+	scale_factor = target_sum / sum_demand
+	scaled_matrix = np.round(demand_matrix * scale_factor).astype(int)
+	return scaled_matrix
 
 
-if __name__=='__main__':
-	np.random.seed(11)
-	demand_dict = circ_demand(5, 25, 4)
-	demand_matrix = demand_dict_to_matrix(demand_dict, 5)
-	print(demand_dict)
-	print("Demand Matrix:\n", demand_matrix)
 	

@@ -4,7 +4,7 @@ Graph types:
 2. erdos-renyi
 3. grid
 """
-GRAPH_TYPE = 'grid'
+GRAPH_TYPE = 'erdos-renyi'
 
 """ Graph Size """
 GRAPH_SIZE = 100
@@ -18,8 +18,8 @@ Types of demand:
 4. circular_no_2_cycles
 """
 
-DEMAND_TYPE = 'circular_no_2_cycles'
-MEAN = 20
+DEMAND_TYPE = 'circular'
+MEAN = 10
 STD_DEV = 1
 MEAN_AMT = 10
 STD_DEV_AMT = 1
@@ -47,20 +47,23 @@ Path type:
 2. random
 3. lsst
 """
-PATH_TYPE = "shortest"
+PATH_TYPE = "lsst"
 
 """ Epoch Len """
-EPOCH_LEN = GRAPH_SIZE*100
+EPOCH_LEN = GRAPH_SIZE*10
 RESET_EPOCH = EPOCH_LEN
 
 """ Number of paths(random) """
 NUM_PATHS_SHORT = 3
 
 """ The parameter for erdos renyi """
-ERDOS_P_EDGE = 0.1
+ERDOS_P_EDGE = 0.2
 
 """ To increase the weight on the edges (Creating Spanning trees)"""
 ALPHA = 1.3 
 
 """ RAND SEED """
-RAND_SEED = 1
+RAND_SEED = 2
+
+""" Target sum of demand matrix """
+TARGET_SUM = (CREDIT_AMT * ROUNDS) / 2
